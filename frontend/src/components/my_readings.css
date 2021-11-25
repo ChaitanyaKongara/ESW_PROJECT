@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap');
+
+table,h1 {
+    font-family: 'Architects Daughter', cursive;
+    font-weight: 1000;
+    text-align: center;
+}
+.header {
+    background: white;
+}
+tr:hover{
+    background: #fff;
+}
