@@ -57,25 +57,10 @@ exports.getAllCin = async(req, res, next) => {
         const result = await retrieveAllCin(ae,cnt,cnt2);
         var item;
         var list = [];
-        // for(var i=0; i<result.data["m2m:cnt"]["m2m:cin"].length;i++){
-        //     item=result.data["m2m:cnt"]["m2m:cin"][i];
-        //     var date = moment(item.ct,"YYYYMMDDThhmmss").format("lll");
-        //     var temp = item.con.split(",");
-        //     // var temp2 = temp3[0];
-        //     // var temp1 = temp2[0];
-        //     var final = {
-        //         "time": date,
-        //         "voc": (temp[1]),
-        //         "hum": (temp[2]),
-        //         "temp": (temp[3]),
-        //         "light": (temp[0]),
-        //         "soil": (temp[4])
-        //     };
-        //     list.push(final);
-        // }
         for(var i=0; i<result.data["m2m:cnt"]["m2m:cin"].length;i++){
             item=result.data["m2m:cnt"]["m2m:cin"][i];
             var date = moment(item.ct,"YYYYMMDDThhmmss").format("lll");
+            console.log(date[0],typeof date);
             var temp = item.con.split("/");
             var temp2 = temp[0].split(',');
             var temp1 = temp[1].split(',');

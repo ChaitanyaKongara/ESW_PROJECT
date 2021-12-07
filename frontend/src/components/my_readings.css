@@ -11,3 +11,11 @@ table,h1 {
 tr:hover{
     background: #fff;
 }
+.SoilMoisture,.LightIntensity{
+    text-align: center;
+    background:#f9dede;
+}
+
+.chart {
+    float: right;
+}

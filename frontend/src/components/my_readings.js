@@ -12,12 +12,15 @@ export default class my_readings extends Component {
       light: [],
       hum: [],
       soil: [],
-      time: []
+      time: [],
+      day: "",
+      hrs: "",
+      alert: false
     };
   }
   componentDidMount() {
     axios
-      .get("http://127.0.0.1:4000/Team-27/Node-1/Data")
+      .get("http://127.0.0.1:4000/Team-27/Node-2/Data")
       .then((res) => {
         var temp = res.data;
         var voc1 = [[ "Time", "VOC" ]];
@@ -38,6 +41,12 @@ export default class my_readings extends Component {
           // this.state.soil.push(temp[i]["soil"]);
           // this.state.light.push(temp[i]["light"]);
           // this.state.time.push(temp[i]["time"]);
+          if(i==1){
+            var time = temp[i]["time"].split(" ");
+            this.state.day = time.at(-1);
+            this.state.hrs = time.at(-2).split(":").at(0);
+            console.log(this.state.hrs+ " " + this.state.day);
+          }
         };
         this.setState({ readings: res.data})
         this.setState({ voc: voc1});
@@ -49,47 +58,22 @@ export default class my_readings extends Component {
       .catch(function (err) {
         console.log(err);
       });
-      console.log(this.state.voc);
+      // console.log(this.state.voc);
   }
   render() {
     return (
       <div>
-        <h1> Readings </h1>
-        <br />
-        <br />
-        <br />
-        <br />
-        <div className="table-responsive">
-          <table className="table table-lg table-hover">
-            <thead>
-              <tr className="header">
-                <th scope="col">Sno</th>
-                <th scope="col">Date</th>
-                <th scope="col">Voc</th>
-                <th scope="col">Soil Moisture</th>
-                <th scope="col">Humidity</th>
-                <th scope="col">Temperature</th>
-                <th scope="col">Light</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.readings.map((obj, i) => (
-                <tr>
-                  <td>{i + 1}</td>
-                  <td>{obj.time}</td>
-                  <td>{obj.voc}</td>
-                  <td>{obj.soil}</td>
-                  <td>{obj.hum}</td>
-                  <td>{obj.temp}</td>
-                  <td>{obj.light}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="SoilMoisture">
+        {this.state.soil.length != 0 && this.state.soil[1][1] <= 8 && <h2><p>Alert! <br/> Soil Moisture is at critical level, water the plant ASAP!</p></h2>}
         </div>
+        <div className="LightIntensity">
+        {this.state.light.length != 0 && this.state.day === "AM" && parseInt(this.state.hrs,10) >= 8 && this.state.light[1][1] <= 40 && <h2><p>Alert! <br/> Light Intensity is at critical level.</p></h2>}
+        {this.state.light.length != 0 && this.state.day === "PM" && parseInt(this.state.hrs,10) <= 6 && this.state.light[1][1] <= 40 && <h2><p>Alert! <br/> Light Intensity is at critical level.</p></h2>}
+        </div>
+        <h1> Dashboard </h1>
         <div className="graphs">
           <div>
-
+            <div className="chart">
             <Chart
               width={'600px'}
               height={'400px'}
@@ -105,6 +89,8 @@ export default class my_readings extends Component {
                 },
               }}
             />
+            </div>
+            <div className="chart">
             <Chart
               width={'600px'}
               height={'400px'}
@@ -120,6 +106,7 @@ export default class my_readings extends Component {
                 },
               }}
             />
+            </div>
             <Chart
               width={'600px'}
               height={'400px'}
@@ -166,6 +153,39 @@ export default class my_readings extends Component {
               }}
             />
           </div>
+        </div>
+        <h1> Readings </h1>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div className="table-responsive">
+          <table className="table table-lg table-hover">
+            <thead>
+              <tr className="header">
+                <th scope="col">Sno</th>
+                <th scope="col">Date</th>
+                <th scope="col">Voc</th>
+                <th scope="col">Soil Moisture</th>
+                <th scope="col">Humidity</th>
+                <th scope="col">Temperature</th>
+                <th scope="col">Light</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.readings.map((obj, i) => (
+                <tr>
+                  <td>{i + 1}</td>
+                  <td>{obj.time}</td>
+                  <td>{obj.voc}</td>
+                  <td>{obj.soil}</td>
+                  <td>{obj.hum}</td>
+                  <td>{obj.temp}</td>
+                  <td>{obj.light}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     );
