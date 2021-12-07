@@ -20,7 +20,7 @@ export default class my_readings extends Component {
   }
   componentDidMount() {
     axios
-      .get("http://127.0.0.1:4000/Team-27/Node-2/Data")
+      .get("http://127.0.0.1:4000/Team-27/Node-1/Data")
       .then((res) => {
         var temp = res.data;
         var voc1 = [[ "Time", "VOC" ]];

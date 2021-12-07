@@ -61,18 +61,62 @@ exports.getAllCin = async(req, res, next) => {
             item=result.data["m2m:cnt"]["m2m:cin"][i];
             var date = moment(item.ct,"YYYYMMDDThhmmss").format("lll");
             console.log(date[0],typeof date);
-            var temp = item.con.split("/");
-            var temp2 = temp[0].split(',');
-            var temp1 = temp[1].split(',');
+            
+            
+            var aesEcb = require('aes-ecb');
+            var s = item.con.split("h");
+            
+            //var s = item.con;
+            
+            // console.log(s[0])
+            // console.log(s[1])
+            // console.log(s[2])
+        
+            var temp = s[0] +"h"+ s[1];
+
+            
+            var sha256 = require('js-sha256');
+            if(sha256(temp) != s[2]){
+               // console.log(s[2]);
+                //console.log(sha256(temp));
+                console.log("^^^^^^^^^^^^^^^^data corrupted !!!  Integrity lost XXXX!!!^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
+
+            }
+            else{
+                console.log("^^^^^^^^^^^^^^^^^^data is accurate no corruption ^^^^^^^^^^^^^^^^^^^^");
+
+
+            }
+
+
+            var base64String1 = Buffer.from(s[0], 'hex').toString('base64')
+            var base64String2 = Buffer.from(s[1], 'hex').toString('base64')
+            
+            var decrypt1 = aesEcb.decrypt('abcdefghijklmnop',base64String1);
+            var decrypt2 =  aesEcb.decrypt('abcdefghijklmnop',base64String2);
+
+            // console.log(decrypt1)
+            // console.log(decrypt2)
+
+
+        
+            var temp2 = decrypt1.split('?');
+            var temp1 = decrypt2.split('?');
+            //console.log(temp1)
+            //console.log(s)
             // console.log(typeof decrypt(temp2[0])+'.'+decrypt(temp1[0]));
             var final = {
                 "time": date,
-                "voc": parseFloat(decrypt(temp2[1])+'.'+decrypt(temp1[1])),
-                "hum": parseFloat(decrypt(temp2[2])+'.'+decrypt(temp1[2])),
-                "temp": parseFloat(decrypt(temp2[3])+'.'+decrypt(temp1[3])),
-                "light": parseFloat(decrypt(temp2[0])+'.'+decrypt(temp1[0])),
-                "soil": parseFloat(decrypt(temp2[4])+'.'+decrypt(temp1[4]))
+                "voc": parseFloat(temp2[1]),
+                "hum": parseFloat(temp1[0]),
+                "temp": parseFloat(temp1[1]),
+                "light": parseFloat(temp2[0]),
+                "soil": parseFloat(temp1[2])
             };
+
+            
+            
             // console.log(typeof parseFloat(decrypt(temp2[0])+'.'+decrypt(temp1[0])));
             list.push(final);
         }
